@@ -3,8 +3,8 @@ import requests
 
 class YaUploader:
 
-    def __init__(self, token):
-        self.token = token
+    def __init__(self):
+        self.token = ''     # yandex token
 
     def get_headers(self):
         return {
@@ -12,16 +12,22 @@ class YaUploader:
             'Authorization': 'OAuth {}'.format(self.token)
         }
 
-    def _get_upload_link(self, disk_file_path):
+    def add_folder(self):
+        add_url = 'https://cloud-api.yandex.net/v1/disk/resources'
+        headers = self.get_headers()
+        params = {'path': 'Pictures'}
+        res = requests.put(add_url, headers=headers, params=params)
+        r = res.json()
+        # if r['error'] == 'DiskPathPointsToExistentDirectoryError':
+        #     return 'Папка с указанным именем уже существует'
+        # else:
+        return r
+
+    def upload_by_url(self, pic_name, pic_url):
         upload_url = 'https://cloud-api.yandex.net/v1/disk/resources/upload'
         headers = self.get_headers()
-        params = {'path': disk_file_path, 'overwrite': 'true'}
-        res = requests.get(upload_url, headers=headers, params=params)
-        return res.json()
-
-    def upload(self, file_path, upload_filename):
-        href = self._get_upload_link(disk_file_path=upload_filename).get('href', '')
-        res = requests.put(href, data=open(file_path, 'rb'))
-        res.raise_for_status()
-        # if res.status_code == 201:
-        #     print("Success")
+        params = {
+            'path': f'{pic_name}.jpg',
+            'url': pic_url
+        }
+        res = requests.post(upload_url, headers=headers, params=params)

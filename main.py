@@ -1,8 +1,7 @@
-from pathlib import Path
-# from vk import VKTOKEN
 from vk import Vk
 from yandex import YaUploader
 from tqdm import tqdm
+from pprint import pprint
 
 
 def get_largest_images(d, count=5):  # сортировка по высоте/ширине (в sorted поменять x[1] и x[2] местами)
@@ -22,7 +21,7 @@ def get_largest_images2(d, count=5):  # сортировка по произве
     for kk, vv in d.items():
         for parameter, measure in vv.items():
             if parameter == 'height':
-                l1 = [kk, vv['height']*vv['width']]
+                l1 = [kk, vv['height']*vv['width'], vv['url']]
                 img_list.append(l1)
     img_list = sorted(img_list, key=lambda x: -x[1])
     del img_list[count:]
@@ -30,12 +29,14 @@ def get_largest_images2(d, count=5):  # сортировка по произве
 
 
 if __name__ == '__main__':
-    vk = Vk(token='')  # vk token
+    vk = Vk()
     vk.get_img_with_params()
     l_dict = vk.img_height_width_dict.copy()
     largest_image_ids = get_largest_images2(l_dict)
+    pprint(largest_image_ids)
+    uploader = YaUploader()
+    uploader.add_folder()
     for element in tqdm(largest_image_ids, bar_format='{l_bar}{bar:20}|{n_fmt}/{total_fmt}'):
-        img_name = f'{element[0]}.jpg'
-        file_path = Path('images', img_name)
-        uploader = YaUploader(token='')  # yandex token
-        uploader.upload(file_path, img_name)
+        img_name = f'Pictures/{element[0]}'
+        file_path = element[2]
+        uploader.upload_by_url(img_name, file_path)
