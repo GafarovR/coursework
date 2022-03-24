@@ -11,18 +11,24 @@ def naming(n, num_list):  # сделано, для файлов с одинак�
     else:
         return n
 
-
 class Vk:
 
     def __init__(self):
-        self.token = ''       # vk token
+        self.token = ''  # vk token
         self.data = []
         self.namelist = []
         self.img_height_width_dict = {}
         self.p_url = ''
+        self.profile_id = ''
+        self.name_url = 'https://api.vk.com/method/users.get'
+        self.search_params = {
+            'user_ids': input('Введите короткое имя пользователя ВК: '),
+            'access_token': self.token,
+            'v': '5.131'
+        }
         self.URL = 'https://api.vk.com/method/photos.get'
         self.params = {
-            'owner_id': input('Введите id пользователя ВК: '),
+            'owner_id': '',  # input('Введите id пользователя ВК: ')
             'access_token': self.token,
             'album_id': 'profile',
             'extended': 1,
@@ -49,10 +55,16 @@ class Vk:
                         img_hw = {'height': img_size_h, 'width': img_size_w, 'url': img}
                         self.img_height_width_dict[img_name] = img_hw
                         self.namelist.append(img_name)
-                        with open(f' {img_name}.txt', 'w') as f:
+                        with open('info.json', 'a') as f:
                             json.dump(r, f)
                         data_dict = {'filename': f'{img_name}.jpg', 'size': f'{img_size}'}
                         self.data.append(data_dict)
                         self.data.clear()
                         data_dict.clear()
                         order_number += 1
+
+    def get_profile_id(self):
+        res = requests.get(self.name_url, params=self.search_params)
+        r = res.json()
+        profile_id = str(r['response'][0]['id'])
+        return profile_id

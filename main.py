@@ -30,10 +30,10 @@ def get_largest_images2(d, count=5):  # сортировка по произве
 
 if __name__ == '__main__':
     vk = Vk()
+    vk.params['owner_id'] = vk.get_profile_id()
     vk.get_img_with_params()
     l_dict = vk.img_height_width_dict.copy()
     largest_image_ids = get_largest_images2(l_dict)
-    pprint(largest_image_ids)
     uploader = YaUploader()
     uploader.add_folder()
     for element in tqdm(largest_image_ids, bar_format='{l_bar}{bar:20}|{n_fmt}/{total_fmt}'):
