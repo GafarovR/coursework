@@ -11,6 +11,7 @@ def naming(n, num_list):  # сделано, для файлов с одинак�
     else:
         return n
 
+
 class Vk:
 
     def __init__(self):
