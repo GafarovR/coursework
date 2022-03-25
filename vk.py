@@ -56,7 +56,7 @@ class Vk:
                         img_hw = {'height': img_size_h, 'width': img_size_w, 'url': img}
                         self.img_height_width_dict[img_name] = img_hw
                         self.namelist.append(img_name)
-                        with open('info.json', 'a') as f:
+                        with open(f'{self.search_params["user_ids"]}.json', 'a') as f:
                             json.dump(r, f)
                         data_dict = {'filename': f'{img_name}.jpg', 'size': f'{img_size}'}
                         self.data.append(data_dict)
